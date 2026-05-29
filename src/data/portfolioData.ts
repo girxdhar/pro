@@ -68,16 +68,25 @@ Type 'help' to see available commands.`
   ],
   education: [
     {
-      degree: 'Bachelor of Science in Computer Science',
-      institution: 'University of Technology',
-      year: '2019',
-      honors: 'Summa Cum Laude'
+      degree: 'MBA in People Management & Psychology',
+      institution: 'Karnataka State Open University',
+      honors: 'O with Distinction.'
     },
     {
-      degree: 'Advanced Web Development Certification',
-      institution: 'Tech Academy',
-      year: '2021',
-      honors: null
+      degree: 'Masters In Computer Application',
+      institution: 'St. Aloysius College, Mangalore',
+      honors: 'O - First Rank.'
+    }
+    {
+      degree: 'Post Graduate Diploma in Computer Applications',
+      year: '2022',
+      honors: 'O - First Rank.'
+    }
+{
+      degree: 'Masters In Computer Application',
+      institution: 'St. Aloysius College, Mangalore',
+      year: '2022',
+      honors: 'O - First Rank.'
     }
   ],
   certifications: [
@@ -86,9 +95,9 @@ Type 'help' to see available commands.`
     'MongoDB Certified Developer'
   ],
   contact: {
-    email: 'mark.gatere@example.com',
-    github: 'github.com/markgatere',
-    linkedin: 'linkedin.com/in/markgatere',
-    twitter: '@markgatere'
+    email: 'girxdhar@gmail.com',
+    github: 'https://github.com/girxdhar',
+    linkedin: 'https://www.linkedin.com/in/girxdhar',
+    Instagram: '@girxdhar'
   }
 };
