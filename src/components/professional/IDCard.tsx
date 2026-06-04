@@ -7,6 +7,7 @@ export default function NeonIDCard() {
   const dragOffsetRef = useRef({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [idleTime, setIdleTime] = useState(0);
+  const animationRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (isDragging) return;
@@ -27,6 +28,10 @@ export default function NeonIDCard() {
   };
 
   const handleDragStart = (clientX, clientY) => {
+    if (animationRef.current !== null) {
+      cancelAnimationFrame(animationRef.current);
+      animationRef.current = null;
+    }
     setIsDragging(true);
     const startX = clientX - dragOffsetRef.current.x;
     const startY = clientY - dragOffsetRef.current.y;
@@ -51,27 +56,30 @@ export default function NeonIDCard() {
 
       const startOffset = { ...dragOffsetRef.current };
       let startTime = performance.now();
-      const duration = 1200; // 1200ms for a very slow, smooth heavy snap
 
       const animateBack = (t) => {
-        const dt = (t - startTime) / duration;
-        if (dt < 1) {
-          // Damped harmonic oscillator: e^(-decay * t) * cos(freq * t)
-          const decay = 4.5;
-          const freq = Math.PI * 3; // 1.5 bounces
-          const envelope = Math.exp(-decay * dt) * Math.cos(freq * dt);
-          
+        const elapsed = (t - startTime) / 1000; // time in seconds
+        
+        // Damped harmonic oscillator: e^(-decay * t) * cos(freq * t)
+        const decay = 2.2; // Lower decay for a longer, realistic settling time
+        const freq = Math.PI * 4; // Bounces per second factor
+        const envelope = Math.exp(-decay * elapsed) * Math.cos(freq * elapsed);
+        
+        // If the remaining amplitude is larger than 0.1% of the initial drag, keep animating
+        if (Math.abs(envelope) > 0.001) {
           updateDrag(
             startOffset.x * envelope,
             startOffset.y * envelope
           );
-          requestAnimationFrame(animateBack);
+          animationRef.current = requestAnimationFrame(animateBack);
         } else {
+          // It has fully settled naturally
           updateDrag(0, 0);
+          animationRef.current = null;
         }
       };
 
-      requestAnimationFrame(animateBack);
+      animationRef.current = requestAnimationFrame(animateBack);
     };
 
     document.addEventListener("mousemove", moveMouse, { passive: false });
@@ -102,8 +110,8 @@ export default function NeonIDCard() {
 
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-start relative overflow-hidden w-full"
-      style={{ background: "linear-gradient(180deg, #111, #333, #111)" }}
+      className="min-h-[100dvh] flex flex-col items-center justify-start relative overflow-hidden w-full"
+      style={{ background: "linear-gradient(180deg, #111 0vh, #333 50vh, #111 100vh)" }}
     >
       {/* HEADER SECTION */}
       <div className="w-full bg-black px-4 py-1.5 flex items-center justify-between border-b border-[#111] z-10 shrink-0 shadow-[0_0_15px_rgba(0,255,0,0.05)]">

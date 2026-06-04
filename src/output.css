@@ -644,6 +644,9 @@
   .h-\[72vh\] {
     height: 72vh;
   }
+  .h-\[100dvh\] {
+    height: 100dvh;
+  }
   .h-\[600px\] {
     height: 600px;
   }
@@ -979,6 +982,18 @@
   .resize-none {
     resize: none;
   }
+  .snap-y {
+    scroll-snap-type: y var(--tw-scroll-snap-strictness);
+  }
+  .snap-mandatory {
+    --tw-scroll-snap-strictness: mandatory;
+  }
+  .snap-start {
+    scroll-snap-align: start;
+  }
+  .snap-always {
+    scroll-snap-stop: always;
+  }
   .scroll-my-1 {
     scroll-margin-block: calc(var(--spacing) * 1);
   }
@@ -1124,6 +1139,9 @@
   .overflow-y-auto {
     overflow-y: auto;
   }
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
   .rounded {
     border-radius: 0.25rem;
   }
@@ -1240,6 +1258,9 @@
   }
   .border-\[\#3e3e42\] {
     border-color: #3e3e42;
+  }
+  .border-\[\#4b5563\] {
+    border-color: #4b5563;
   }
   .border-\[\#10b981\]\/30 {
     border-color: color-mix(in oklab, #10b981 30%, transparent);
@@ -1545,6 +1566,9 @@
   }
   .pr-8 {
     padding-right: calc(var(--spacing) * 8);
+  }
+  .pb-2 {
+    padding-bottom: calc(var(--spacing) * 2);
   }
   .pb-3 {
     padding-bottom: calc(var(--spacing) * 3);
@@ -2634,6 +2658,13 @@
       }
     }
   }
+  .hover\:border-\[\#10b981\]\/70 {
+    &:hover {
+      @media (hover: hover) {
+        border-color: color-mix(in oklab, #10b981 70%, transparent);
+      }
+    }
+  }
   .hover\:border-\[\#303030\] {
     &:hover {
       @media (hover: hover) {
@@ -3718,6 +3749,11 @@
       height: 600px;
     }
   }
+  .lg\:h-auto {
+    @media (width >= 64rem) {
+      height: auto;
+    }
+  }
   .lg\:min-h-0 {
     @media (width >= 64rem) {
       min-height: calc(var(--spacing) * 0);
@@ -3726,6 +3762,11 @@
   .lg\:grid-cols-3 {
     @media (width >= 64rem) {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .lg\:overflow-visible {
+    @media (width >= 64rem) {
+      overflow: visible;
     }
   }
   .lg\:border-r {
@@ -3738,6 +3779,11 @@
     @media (width >= 64rem) {
       border-bottom-style: var(--tw-border-style);
       border-bottom-width: 0px;
+    }
+  }
+  .lg\:py-2 {
+    @media (width >= 64rem) {
+      padding-block: calc(var(--spacing) * 2);
     }
   }
   .\[\&_\.recharts-dot\[stroke\=\'\#fff\'\]\]\:stroke-transparent {
@@ -4118,6 +4164,11 @@
   syntax: "*";
   inherits: false;
 }
+@property --tw-scroll-snap-strictness {
+  syntax: "*";
+  inherits: false;
+  initial-value: proximity;
+}
 @property --tw-space-y-reverse {
   syntax: "*";
   inherits: false;
@@ -4431,6 +4482,7 @@
       --tw-rotate-z: initial;
       --tw-skew-x: initial;
       --tw-skew-y: initial;
+      --tw-scroll-snap-strictness: proximity;
       --tw-space-y-reverse: 0;
       --tw-space-x-reverse: 0;
       --tw-border-style: solid;

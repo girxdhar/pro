@@ -263,7 +263,7 @@ export default function Terminal({ onSwitchView }) {
 
   return (
     <div
-      className="max-w-7xl mx-auto w-full md:rounded-lg overflow-hidden md:border border-[#1d1d1d] relative"
+      className="max-w-7xl mx-auto w-full h-[100dvh] lg:h-auto overflow-y-auto lg:overflow-visible snap-y snap-mandatory scroll-smooth md:rounded-lg md:border border-[#1d1d1d] relative"
       style={{ background: "#000", fontFamily: "'VT323','Courier New','monospace'" }}
     >
       <style>{`
@@ -276,18 +276,22 @@ export default function Terminal({ onSwitchView }) {
 
 
       <div className="grid grid-cols-1 lg:grid-cols-3 min-h-[100dvh] lg:min-h-0">
-        <div className="lg:col-span-1 bg-black border-b lg:border-b-0 lg:border-r border-[#252525] min-h-[100dvh] lg:min-h-0 flex flex-col justify-center relative">
+        <div className="lg:col-span-1 bg-black border-b lg:border-b-0 lg:border-r border-[#252525] min-h-[100dvh] lg:min-h-0 flex flex-col justify-center relative snap-start snap-always">
           <div className="lg:sticky lg:top-6 w-full">
             <IDCard />
           </div>
-          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 lg:hidden text-[#10b981] opacity-70 animate-bounce flex flex-col items-center gap-1 z-50">
+          <div 
+            className="absolute bottom-20 left-1/2 -translate-x-1/2 lg:hidden text-[#10b981] opacity-70 animate-bounce flex flex-col items-center gap-1 z-50 cursor-pointer"
+            onClick={() => document.getElementById('terminal-section')?.scrollIntoView({ behavior: 'smooth' })}
+          >
             <span className="text-[10px] tracking-widest uppercase font-mono drop-shadow-md">Terminal</span>
             <ChevronDown className="w-6 h-6 drop-shadow-md" />
           </div>
         </div>
 
-        <div className="lg:col-span-2 bg-[#050608] min-h-[100dvh] lg:min-h-0 flex flex-col relative">
-          <div className="sticky top-0 z-50 bg-[#0b0f14] px-4 py-2 flex items-center justify-between border-b border-[#252525] shadow-md">
+        <div id="terminal-section" className="lg:col-span-2 bg-[#050608] min-h-[100dvh] lg:min-h-0 flex flex-col relative snap-start snap-always">
+          <div className="sticky top-0 z-50 flex flex-col shadow-md">
+            <div className="bg-[#0b0f14] px-4 pt-6 pb-2 lg:py-2 flex items-center justify-between border-b border-[#252525]">
             <div className="flex items-center gap-3">
               <div className="flex gap-2">
                 <div className="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
@@ -306,31 +310,32 @@ export default function Terminal({ onSwitchView }) {
               </div>
               <div className="opacity-70">{time}</div>
             </div>
-          </div>
-
-          <div className="px-6 py-3 border-b border-[#252525] bg-[#0b0f14] text-xs flex items-center gap-2 flex-wrap sm:text-xs">
-            <span className="text-white">giri</span>
-            <span className="text-[#6b7280]">@</span>
-            <span className="text-[#58a6ff]">terminal</span>
-            <span className="text-[#6b7280]">:~$</span>
-            <span className="text-[#d1e6d1]">ls quick_actions/</span>
-            <select
-              disabled={locked}
-              className="ml-2 bg-[#0b0f14] border border-[#252525] text-[#2BC20E] outline-none px-2 py-1 rounded cursor-pointer disabled:opacity-40"
-              onChange={(e) => {
-                if (e.target.value) {
-                  runCommand(e.target.value);
-                  e.target.value = "";
-                }
-              }}
-            >
-              <option value="">-- select action --</option>
-              <option value="about">about</option>
-              <option value="experience">experience</option>
-              <option value="skills">skills</option>
-              <option value="projects">projects</option>
-              <option value="clear">clear</option>
-            </select>
+            </div>
+            
+            <div className="px-6 py-3 border-b border-[#252525] bg-[#0b0f14] text-xs flex items-center gap-2 flex-wrap sm:text-xs">
+              <span className="text-white">giri</span>
+              <span className="text-[#6b7280]">@</span>
+              <span className="text-[#58a6ff]">terminal</span>
+              <span className="text-[#6b7280]">:~$</span>
+              <span className="text-[#d1e6d1]">ls quick_actions/</span>
+              <select
+                disabled={locked}
+                className="ml-2 bg-[#0b0f14] border border-[#4b5563] hover:border-[#10b981]/70 text-[#2BC20E] outline-none px-2 py-1 rounded cursor-pointer disabled:opacity-40 transition-colors"
+                onChange={(e) => {
+                  if (e.target.value) {
+                    runCommand(e.target.value);
+                    e.target.value = "";
+                  }
+                }}
+              >
+                <option value="">-- select action --</option>
+                <option value="about">about</option>
+                <option value="experience">experience</option>
+                <option value="skills">skills</option>
+                <option value="projects">projects</option>
+                <option value="clear">clear</option>
+              </select>
+            </div>
           </div>
 
           <div
