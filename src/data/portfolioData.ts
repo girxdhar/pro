@@ -1,13 +1,25 @@
 export const portfolioData = {
   about: {
-    title: 'About Me',
-    content: `Hi, I'm giridhar, a Software Engineer by Trade.
+    title: 'USER_PROFILE',
+    role: 'Software Engineer & Innovator',
+    location: 'Bangalore, India',
+    status: 'SYSTEM.ONLINE',
+    stats: {
+      Runtime: '24/7',
+      Focus: 'Full-Stack',
+      Coffee: 'Depleted'
+    },
+    ascii: `
+  ██████╗ ██╗██████╗ ██╗██████╗ ██╗  ██╗ █████╗ ██████╗ 
+ ██╔════╝ ██║██╔══██╗██║██╔══██╗██║  ██║██╔══██╗██╔══██╗
+ ██║  ███╗██║██████╔╝██║██║  ██║███████║███████║██████╔╝
+ ██║   ██║██║██╔══██╗██║██║  ██║██╔══██║██╔══██║██╔══██╗
+ ╚██████╔╝██║██║  ██║██║██████╔╝██║  ██║██║  ██║██║  ██║
+  ╚═════╝ ╚═╝╚═╝  ╚═╝╚═╝╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
+`,
+    content: `Welcome to my interactive "AI powered" portfolio terminal!
 
-Welcome to my interactive "AI powered" portfolio terminal!
-
-I'm passionate about building scalable web applications and exploring the intersection of software engineering and artificial intelligence. With expertise in modern web technologies and a keen interest in machine learning, I strive to create innovative solutions that make a difference.
-
-Type 'help' to see available commands.`
+I'm passionate about building scalable web applications and exploring the intersection of software engineering and artificial intelligence. With expertise in modern web technologies and a keen interest in machine learning, I strive to create innovative solutions that make a difference.`
   },
   experience: [
     {
