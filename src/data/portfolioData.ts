@@ -1,7 +1,7 @@
 export const portfolioData = {
   about: {
     title: 'About Me',
-    content: `Hi, I'm giridhar., a Software & AI Engineer.
+    content: `Hi, I'm giridhar, a Software Engineer by Trade.
 
 Welcome to my interactive "AI powered" portfolio terminal!
 
@@ -11,41 +11,28 @@ Type 'help' to see available commands.`
   },
   experience: [
     {
-      title: 'Software Engineering Intern',
-      company: 'Microsoft',
-      location: 'Seattle, WA',
+      title: 'Software Developer Engineer',
+      company: 'Exxat Inc',
+      location: 'Bangalore, KA',
       period: '2023 - Present',
-      description: 'Working on cloud infrastructure and distributed systems.',
+      description: 'Working on building scalable web applications that are accessiblility compliant.',
       achievements: [
-        'Architected microservices infrastructure',
-        'Improved application performance by 40%',
-        'Led team of 5 developers'
+        'Worked on WCAG 2.2 complaince of all the products.',
+        'Managing the central component libraries used by our products.',
+        'Mentoring and orienting interns in their work.'
       ]
     },
     {
-      title: 'Senior Full Stack Developer',
-      company: 'Tech Innovations Inc.',
-      location: 'San Francisco, CA',
-      period: '2021 - 2023',
-      description: 'Leading development of scalable web applications and mentoring junior developers.',
+      title: 'Assistant Professor (Dept of MCA)',
+      Organization: 'Vivekananda College of Engineering & Technology.',
+      location: 'Puttur, KA',
+      period: '2022 - 2023',
+      description: 'Keenly involved in Academics, Research & Mentoring Students from Class 12 to PG.',
       achievements: [
-        'Architected microservices infrastructure',
-        'Improved application performance by 40%',
-        'Led team of 5 developers'
+        'Achieved 100% results with par student ratings accross all the subjects and students handled.',
+        'Keenly involved in extra-curricular activities with organizing & team building skills.',
       ]
     },
-    {
-      title: 'Frontend Developer',
-      company: 'Digital Solutions Co.',
-      location: 'Remote',
-      period: '2019 - 2021',
-      description: 'Developed responsive web applications using modern JavaScript frameworks.',
-      achievements: [
-        'Built 15+ production applications',
-        'Implemented design system',
-        'Reduced load time by 50%'
-      ]
-    }
   ],
   skills: {
     languages: ['JavaScript', 'TypeScript', 'Python', 'Java', 'Go', 'SQL'],
@@ -81,16 +68,25 @@ Type 'help' to see available commands.`
   ],
   education: [
     {
-      degree: 'Bachelor of Science in Computer Science',
-      institution: 'University of Technology',
-      year: '2019',
-      honors: 'Summa Cum Laude'
+      degree: 'MBA in People Management & Psychology',
+      institution: 'Karnataka State Open University',
+      honors: 'O with Distinction.'
     },
     {
-      degree: 'Advanced Web Development Certification',
-      institution: 'Tech Academy',
-      year: '2021',
-      honors: null
+      degree: 'Masters In Computer Application',
+      institution: 'St. Aloysius College, Mangalore',
+      honors: 'O - First Rank.'
+    }
+    {
+      degree: 'Post Graduate Diploma in Computer Applications',
+      year: '2022',
+      honors: 'O - First Rank.'
+    }
+{
+      degree: 'Masters In Computer Application',
+      institution: 'St. Aloysius College, Mangalore',
+      year: '2022',
+      honors: 'O - First Rank.'
     }
   ],
   certifications: [
@@ -99,9 +95,9 @@ Type 'help' to see available commands.`
     'MongoDB Certified Developer'
   ],
   contact: {
-    email: 'mark.gatere@example.com',
-    github: 'github.com/markgatere',
-    linkedin: 'linkedin.com/in/markgatere',
-    twitter: '@markgatere'
+    email: 'girxdhar@gmail.com',
+    github: 'https://github.com/girxdhar',
+    linkedin: 'https://www.linkedin.com/in/girxdhar',
+    Instagram: '@girxdhar'
   }
 };
