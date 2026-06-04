@@ -1,13 +1,13 @@
 export const portfolioData = {
   about: {
     title: 'USER_PROFILE',
-    role: 'Software Engineer & Innovator',
+    role: 'Software Engineer & Thinker',
     location: 'Bangalore, India',
     status: 'SYSTEM.ONLINE',
     stats: {
       Runtime: '24/7',
       Focus: 'Full-Stack',
-      Coffee: 'Depleted'
+      Adrenaline: 'Overdose'
     },
     ascii: `
   ██████╗ ██╗██████╗ ██╗██████╗ ██╗  ██╗ █████╗ ██████╗ 
@@ -81,22 +81,22 @@ I'm passionate about building scalable web applications and exploring the inters
   education: [
     {
       degree: 'MBA in People Management & Psychology',
-      institution: 'Karnataka State Open University',
+      institution: 'Karnataka State Open University, India.',
       honors: 'O with Distinction.'
     },
     {
       degree: 'Masters In Computer Application',
-      institution: 'St. Aloysius College, Mangalore',
+      institution: 'St. Aloysius College, Mangalore, India.',
       honors: 'O - First Rank.'
     },
+    // {
+    //   degree: 'Post Graduate Diploma in Computer Applications',
+    //   year: '2022',
+    //   honors: 'O - First Rank.'
+    // },
     {
-      degree: 'Post Graduate Diploma in Computer Applications',
-      year: '2022',
-      honors: 'O - First Rank.'
-    },
-    {
-      degree: 'Masters In Computer Application',
-      institution: 'St. Aloysius College, Mangalore',
+      degree: 'Bachelor In Computer Application',
+      institution: 'St. Annes Degree College, Virajpet, India.',
       year: '2022',
       honors: 'O - First Rank.'
     }
