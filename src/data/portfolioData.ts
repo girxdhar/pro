@@ -76,13 +76,13 @@ Type 'help' to see available commands.`
       degree: 'Masters In Computer Application',
       institution: 'St. Aloysius College, Mangalore',
       honors: 'O - First Rank.'
-    }
+    },
     {
       degree: 'Post Graduate Diploma in Computer Applications',
       year: '2022',
       honors: 'O - First Rank.'
-    }
-{
+    },
+    {
       degree: 'Masters In Computer Application',
       institution: 'St. Aloysius College, Mangalore',
       year: '2022',
