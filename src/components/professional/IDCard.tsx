@@ -74,9 +74,28 @@ export default function NeonIDCard() {
 
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-start px-6"
+      className="min-h-screen flex flex-col items-center justify-start relative overflow-hidden w-full"
       style={{ background: "linear-gradient(180deg, #111, #333, #111)" }}
     >
+      {/* HEADER SECTION */}
+      <div className="w-full bg-[#0b0f14] px-4 py-2 flex items-center justify-between border-b border-[#252525] z-10 shrink-0">
+        <div className="flex items-center gap-2 text-xs font-mono text-[#10b981]">
+          <span className="w-2 h-2 rounded-full bg-[#10b981] animate-pulse"></span>
+          <span className="tracking-widest uppercase">System Access Granted</span>
+        </div>
+        
+        <button
+          onClick={() => {
+            window.location.href = "https://girxdhar.github.io/personal";
+          }}
+          className="group transition-transform duration-300 hover:scale-105"
+        >
+          <div className="relative bg-[#050608] border border-[#30363d] group-hover:border-[#10b981] rounded-full px-3 py-1 transition-colors duration-300 shadow-[0_0_10px_rgba(16,185,129,0.1)]">
+            <span className="text-[#10b981] text-[10px] font-mono font-bold tracking-wider uppercase">Personal Profile</span>
+          </div>
+        </button>
+      </div>
+
       {/* WRAPPER: Thread + Connector + Card */}
       <div
         onMouseDown={handleMouseDown}

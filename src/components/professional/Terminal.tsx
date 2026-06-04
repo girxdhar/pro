@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import IDCard from "./IDCard";
 import { portfolioData } from "../../data/portfolioData";
-import { Code2 } from "lucide-react";
+import { User, ChevronDown, Loader2 } from "lucide-react";
 
 export default function Terminal({ onSwitchView }) {
   const [commandHistory, setCommandHistory] = useState<{ command: string; output: string }[]>([]);
@@ -10,27 +10,26 @@ export default function Terminal({ onSwitchView }) {
   const [cursorVisible, setCursorVisible] = useState(true);
   const [time, setTime] = useState("");
   const [booting, setBooting] = useState(true);
+  const [inView, setInView] = useState(false);
+  const [visibleBootLines, setVisibleBootLines] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const termRef = useRef<HTMLDivElement>(null);
 
-const bootLines = [
-  "INITIALIZING SYSTEM SEQUENCE 0xA23F... OK",
-  "LOADING BIOS EXTENSIONS: [0x0012,0x00AF,0x0F3D]",
-  "MEMORY MAP CHECK: 640KB BASE, 63MB EXTENDED... VERIFIED",
-  "CPU CORE 0 INIT: CPUID=0x6F1A, CACHE=256KB",
-  "CPU CORE 1 INIT: CPUID=0x6F1B, CACHE=256KB",
-  "APIC TABLE CHECK: INTERRUPTS 0x0F, 0x1B, 0x3C ENABLED",
-  "PCI BUS SCAN: DEVICE 00:1F.2, 01:00.0, 02:0A.1 DETECTED",
-  "PCI DEVICE 00:1F.2 DRIVER LOAD: INIT CODE 0xC0FFEE",
-  "GPU BIOS LOAD: CHECKSUM 0x7FA12B... OK",
-  "VGA TEXT MODE ENABLED, RESOLUTION 80x25",
-  "AUDIO CHIP 0 SYNC: DRIVER VERSION 0x03AB",
-  "SOUND CARD INIT COMPLETE: BUFFER ALLOCATED",
-  "IRQ VECTOR TABLE CHECK: 0x20-0x2F PASSED",
-  "IO APIC CONFIG: BASE 0xFEE00000",
-  "KERNEL MODULE LOADER START: 32 MODULES FOUND",
-  "SYSTEM ONLINE: NO ERRORS DETECTED"
-];
+  const bootLines = [
+    { action: "INITIALIZING SYSTEM SEQUENCE 0xA23F", status: "OK", color: "text-[#10b981]" },
+    { action: "LOADING BIOS EXTENSIONS: [0x0012,0x00AF]", status: "DONE", color: "text-[#10b981]" },
+    { action: "MEMORY MAP CHECK: 640KB BASE, 63MB EXT", status: "VERIFIED", color: "text-[#10b981]" },
+    { action: "CPU CORE 0 INIT: CPUID=0x6F1A", status: "READY", color: "text-[#0ea5e9]" },
+    { action: "CPU CORE 1 INIT: CPUID=0x6F1B", status: "READY", color: "text-[#0ea5e9]" },
+    { action: "APIC TABLE CHECK: INTERRUPTS ENABLED", status: "PASS", color: "text-[#10b981]" },
+    { action: "PCI BUS SCAN: DEVICE DETECTED", status: "OK", color: "text-[#10b981]" },
+    { action: "GPU BIOS LOAD: CHECKSUM 0x7FA12B", status: "OK", color: "text-[#10b981]" },
+    { action: "VGA TEXT MODE ENABLED", status: "80x25", color: "text-[#eab308]" },
+    { action: "AUDIO CHIP 0 SYNC: DRIVER VERSION 0x03AB", status: "OK", color: "text-[#10b981]" },
+    { action: "IRQ VECTOR TABLE CHECK: 0x20-0x2F", status: "PASSED", color: "text-[#10b981]" },
+    { action: "KERNEL MODULE LOADER START", status: "32 FOUND", color: "text-[#0ea5e9]" },
+    { action: "SYSTEM ONLINE: NO ERRORS DETECTED", status: "ACTIVE", color: "text-[#10b981]" }
+  ];
 
   useEffect(() => {
     const tick = setInterval(() => {
@@ -46,12 +45,48 @@ const bootLines = [
   }, []);
 
   useEffect(() => {
-    const bootTimer = setTimeout(() => {
-      setBooting(false);
-      setLocked(false);
-    }, 4000);
-    return () => clearTimeout(bootTimer);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    if (termRef.current) {
+      observer.observe(termRef.current);
+    }
+    return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (!inView) return;
+    
+    let currentLine = 0;
+    const interval = setInterval(() => {
+      if (currentLine < bootLines.length) {
+        currentLine++;
+        setVisibleBootLines(currentLine);
+      } else {
+        clearInterval(interval);
+        const bootTimer = setTimeout(() => {
+          setBooting(false);
+          setLocked(false);
+        }, 500); // Slight delay after last line
+      }
+    }, 150); // Speed of boot line appearance
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [inView]);
+
+  useEffect(() => {
+    if (!locked && inputRef.current) {
+      inputRef.current.focus({ preventScroll: true });
+    }
+  }, [locked, commandHistory]);
 
   useEffect(() => {
     if (termRef.current) termRef.current.scrollTop = termRef.current.scrollHeight;
@@ -59,27 +94,81 @@ const bootLines = [
 
   const interpret = (cmd: string) => {
     const lower = cmd.toLowerCase();
-    if (["hello", "hi", "hey"].includes(lower))
-      return "Hello there! Welcome to my terminal. Type 'help' to see commands.";
-    if (lower === "help")
-      return "Commands:\n about\n experience\n skills\n projects\n education\n certifications\n contact\n clear";
+    
+    if (["hello", "hi", "hey"].includes(lower)) {
+      return "╭── [ SYSTEM MESSAGE ]\n│ Hello there! Welcome to my terminal.\n╰── Type 'help' to see available commands.";
+    }
+    
+    if (lower === "help") {
+      return "╭── [ AVAILABLE COMMANDS ]\n" +
+             "│\n" +
+             "├── > about\n" +
+             "├── > experience\n" +
+             "├── > skills\n" +
+             "├── > projects\n" +
+             "├── > education\n" +
+             "├── > contact\n" +
+             "╰── > clear";
+    }
+    
     if (lower === "clear") return "CLEAR_SCREEN";
-    if (lower.includes("about")) return portfolioData.about.content;
-    if (lower.includes("experience"))
-      return portfolioData.experience.map((e) => `${e.title} @ ${e.company}\n${e.period}\n${e.description}`).join("\n\n");
-    if (lower.includes("skills"))
+    
+    if (lower.includes("about")) {
+      // Simple word wrap for about text to keep the box neat
+      const text = portfolioData.about.content.match(/.{1,60}(?:\s|$)/g)?.join("\n│   ") || portfolioData.about.content;
+      return `╭── [ ABOUT ME ]\n│\n│   ${text.trim()}\n│\n╰───────────────────────────────────────────────`;
+    }
+    
+    if (lower.includes("experience")) {
+      const exp = portfolioData.experience.map((e, i, arr) => {
+        const isLast = i === arr.length - 1;
+        const branch = isLast ? "╰──" : "├──";
+        const pipe = isLast ? " " : "│";
+        return `${branch} [ ${e.title.toUpperCase()} ]\n${pipe}    @ ${e.company} | ${e.period}\n${pipe}    > ${e.description}`;
+      }).join("\n│\n");
+      return `╭── [ EXPERIENCE LOG ]\n│\n${exp}`;
+    }
+    
+    if (lower.includes("skills")) {
       return (
-        `Languages:\n  ${portfolioData.skills.languages.join(", ")}\n\n` +
-        `Frameworks:\n  ${portfolioData.skills.frameworks.join(", ")}\n\n` +
-        `Tools:\n  ${portfolioData.skills.tools.join(", ")}`
+        `╭── [ TECHNICAL SKILLS ]\n` +
+        `│\n` +
+        `├── [ LANGUAGES ]\n` +
+        `│   ╰── ${portfolioData.skills.languages.join(", ")}\n` +
+        `│\n` +
+        `├── [ FRAMEWORKS ]\n` +
+        `│   ╰── ${portfolioData.skills.frameworks.join(", ")}\n` +
+        `│\n` +
+        `╰── [ TOOLS ]\n` +
+        `    ╰── ${portfolioData.skills.tools.join(", ")}`
       );
-    if (lower.includes("projects"))
-      return portfolioData.projects.map((p, i) => `${i + 1}. ${p.name}\n   ${p.description}`).join("\n\n");
-    if (lower.includes("education"))
-      return portfolioData.education.map((e) => `${e.degree}\n${e.institution} (${e.year})`).join("\n\n");
-    if (lower.includes("contact"))
-      return `Email: ${portfolioData.contact.email}\nGitHub: ${portfolioData.contact.github}`;
-    return `Unknown command '${cmd}'. Type 'help'.`;
+    }
+    
+    if (lower.includes("projects")) {
+      const proj = portfolioData.projects.map((p, i, arr) => {
+        const isLast = i === arr.length - 1;
+        const branch = isLast ? "╰──" : "├──";
+        const pipe = isLast ? " " : "│";
+        return `${branch} [ ${p.name.toUpperCase()} ]\n${pipe}    > ${p.description}\n${pipe}    > Link: ${p.link}`;
+      }).join("\n│\n");
+      return `╭── [ PROJECT DIRECTORY ]\n│\n${proj}`;
+    }
+    
+    if (lower.includes("education")) {
+      const edu = portfolioData.education.map((e, i, arr) => {
+        const isLast = i === arr.length - 1;
+        const branch = isLast ? "╰──" : "├──";
+        const pipe = isLast ? " " : "│";
+        return `${branch} [ ${e.degree.toUpperCase()} ]\n${pipe}    > ${e.institution}\n${pipe}    > Class of ${e.year}`;
+      }).join("\n│\n");
+      return `╭── [ EDUCATION RECORDS ]\n│\n${edu}`;
+    }
+    
+    if (lower.includes("contact")) {
+      return `╭── [ SECURE COMM CHANNEL ]\n│\n├── > EMAIL  : ${portfolioData.contact.email}\n╰── > GITHUB : ${portfolioData.contact.github}`;
+    }
+    
+    return `╭── [ ERROR ]\n│ Command not found: '${cmd}'.\n╰── Type 'help' for a list of available commands.`;
   };
 
   const runCommand = (cmd: string) => {
@@ -116,86 +205,99 @@ const bootLines = [
 
   return (
     <div
-      className="max-w-7xl mx-auto rounded-lg overflow-hidden border border-[#1d1d1d] relative"
+      className="max-w-7xl mx-auto w-full md:rounded-lg overflow-hidden md:border border-[#1d1d1d] relative"
       style={{ background: "#000", fontFamily: "'VT323','Courier New','monospace'" }}
     >
-      <button
-        disabled={locked}
-        onClick={onSwitchView}
-        className="fixed top-6 right-6 z-50 group disabled:opacity-40"
-      >
-        <div className="relative bg-[#0b0f14] border border-[#30363d] rounded-full p-3">
-          <Code2 className="w-5 h-5 text-[#0ea5e9]" />
-        </div>
-      </button>
+      <style>{`
+        .text-\\[\\#58a6ff\\] { color: #58a6ff; }
+        .text-\\[\\#d1e6d1\\] { color: #d1e6d1; }
+        .text-\\[\\#01b012\\] { color: #01b012; }
+        .text-\\[\\#2BC20E\\] { color: #2BC20E; }
+        .bg-\\[\\#050608\\] { background-color: #050608; }
+      `}</style>
 
-      <div className="bg-[#0b0f14] px-4 py-2 flex items-center justify-between border-b border-[#252525]">
-        <div className="flex items-center gap-3">
-          <div className="flex gap-2">
-            <div className="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
-            <div className="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
-            <div className="w-3 h-3 rounded-full bg-[#27c93f]"></div>
-          </div>
-          <span className="text-xs text-[#8b949e]">giri@portfolio:~</span>
-        </div>
-        <div className="flex items-center gap-4 text-xs text-[#8b949e]">
-          <div className="flex items-center gap-2">
-            <span
-              className="w-2 h-2 rounded-full transition-all"
-              style={{ background: cursorVisible ? "#059232" : "#057816" }}
-            ></span>
-            <span>online</span>
-          </div>
-          <div className="opacity-70">{time}</div>
-        </div>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3">
-        <div className="lg:col-span-1 bg-black  border-r border-[#252525]">
-          <div className="sticky top-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 min-h-[100dvh] lg:min-h-0">
+        <div className="lg:col-span-1 bg-black border-b lg:border-b-0 lg:border-r border-[#252525] min-h-[100dvh] lg:min-h-0 flex flex-col justify-center relative">
+          <div className="lg:sticky lg:top-6 w-full">
             <IDCard />
           </div>
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 lg:hidden text-[#10b981] opacity-70 animate-bounce flex flex-col items-center gap-1">
+            <span className="text-[10px] tracking-widest uppercase font-mono">Terminal</span>
+            <ChevronDown className="w-5 h-5" />
+          </div>
         </div>
 
-        <div className="lg:col-span-2 bg-[#050608]">
-          <div className="px-6 py-3 border-b border-[#252525] bg-[#0b0f14] text-xs flex items-center gap-2 flex-wrap">
-            <span className="text-[#10b981]">~$</span>
-            <span className="text-[#6b7280] mx-2">quick:</span>
-            {["about", "experience", "skills", "projects"].map((s, i) => (
-              <span key={s}>
-                <button
-                  disabled={locked}
-                  onClick={() => runCommand(s)}
-                  className="text-[#2BC20E] hover:underline disabled:opacity-40"
-                >
-                  {s}
-                </button>
-                {i < 3 && <span className="text-[#6b7280] mx-1">|</span>}
-              </span>
-            ))}
+        <div className="lg:col-span-2 bg-[#050608] min-h-[100dvh] lg:min-h-0 flex flex-col">
+          <div className="bg-[#0b0f14] px-4 py-2 flex items-center justify-between border-b border-[#252525]">
+            <div className="flex items-center gap-3">
+              <div className="flex gap-2">
+                <div className="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
+                <div className="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
+                <div className="w-3 h-3 rounded-full bg-[#27c93f]"></div>
+              </div>
+              <span className="text-xs text-[#8b949e]">giri@portfolio:~</span>
+            </div>
+            <div className="flex items-center gap-4 text-xs text-[#8b949e]">
+              <div className="flex items-center gap-2">
+                <span
+                  className="w-2 h-2 rounded-full transition-all"
+                  style={{ background: cursorVisible ? "#059232" : "#057816" }}
+                ></span>
+                <span>online</span>
+              </div>
+              <div className="opacity-70">{time}</div>
+            </div>
+          </div>
+
+          <div className="px-6 py-3 border-b border-[#252525] bg-[#0b0f14] text-xs flex items-center gap-2 flex-wrap sm:text-xs">
+            <span className="text-white">giri</span>
+            <span className="text-[#6b7280]">@</span>
+            <span className="text-[#58a6ff]">terminal</span>
+            <span className="text-[#6b7280]">:~$</span>
+            <span className="text-[#d1e6d1]">ls quick_actions/</span>
+            <select
+              disabled={locked}
+              className="ml-2 bg-[#0b0f14] border border-[#252525] text-[#2BC20E] outline-none px-2 py-1 rounded cursor-pointer disabled:opacity-40"
+              onChange={(e) => {
+                if (e.target.value) {
+                  runCommand(e.target.value);
+                  e.target.value = "";
+                }
+              }}
+            >
+              <option value="">-- select action --</option>
+              <option value="about">about</option>
+              <option value="experience">experience</option>
+              <option value="skills">skills</option>
+              <option value="projects">projects</option>
+              <option value="clear">clear</option>
+            </select>
           </div>
 
           <div
             ref={termRef}
-            className="p-4 h-[600px] overflow-y-auto sm:h-[500px]"
+            className="p-4 flex-1 overflow-y-auto lg:h-[600px]"
             onClick={() => inputRef.current?.focus()}
           >
             {booting ? (
-              <pre className="text-[#2BC20E] text-sm sm:text-xs">
-                {bootLines.map((l, i) => (
-                  <div
-                    key={i}
-                    style={{ animation: `fadeIn 0.3s ease ${i * 0.2}s forwards`, opacity: 0 }}
-                  >
-                    {l}
+              <div className="font-mono text-sm sm:text-xs">
+                {inView && bootLines.slice(0, visibleBootLines).map((line, i) => (
+                  <div key={i} className="flex items-center justify-between mb-1 opacity-90 hover:opacity-100 transition-opacity">
+                    <span className="text-[#8b949e]">{line.action}</span>
+                    <span className="flex items-center gap-2">
+                      <span className="text-[#30363d] hidden sm:inline-block">........</span>
+                      <span className={`font-bold ${line.color}`}>[{line.status}]</span>
+                    </span>
                   </div>
                 ))}
-                <style>{`
-                  @keyframes fadeIn {
-                    to { opacity: 1; }
-                  }
-                `}</style>
-              </pre>
+                {visibleBootLines < bootLines.length && inView && (
+                  <div className="flex items-center gap-2 mt-4 text-[#0ea5e9]">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span className="animate-pulse">Loading system modules...</span>
+                  </div>
+                )}
+              </div>
             ) : (
               <>
                 {commandHistory.map((item, i) => (
@@ -222,7 +324,6 @@ const bootLines = [
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyDown={handleEnter}
-                      autoFocus
                       className="flex-1 bg-transparent text-[#e5e7eb] outline-none text-sm sm:text-xs"
                     />
                     <span className="text-[#004611]">{cursorVisible ? "█" : " "}</span>
