@@ -564,6 +564,47 @@ export default function Terminal({ onSwitchView }: { onSwitchView?: () => void }
         .animate-type-in {
           animation: typeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
+        /* Neon revolving border for quick actions (subtle + mobile-only orbit segment) */
+        .neon-border-wrapper { position: relative; display: inline-block; }
+        /* softened background glow (very subtle) */
+        .neon-border-wrapper::after {
+          content: "";
+          position: absolute;
+          top: -2px;
+          left: -2px;
+          right: -2px;
+          bottom: -2px;
+          border-radius: 6px;
+          background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(74,222,128,0.9) 40%, rgba(74,222,128,0.15) 60%, rgba(0,0,0,0) 100%);
+          background-size: 200% 100%;
+          animation: neon-slide 2.6s linear infinite;
+          pointer-events: none;
+          mix-blend-mode: screen;
+          opacity: 0.55;
+          filter: drop-shadow(0 0 4px rgba(74,222,128,0.35));
+        }
+        @keyframes neon-slide {
+          0% { background-position: 0% 50%; }
+          100% { background-position: 200% 50%; }
+        }
+        .neon-border-wrapper select { position: relative; z-index: 3; }
+
+        /* Orbiting snake-like segment (mobile only) */
+        .neon-border-wrapper .orbit { position: absolute; inset: -8px; display: block; pointer-events: none; z-index: 2; }
+        .neon-border-wrapper .orbit { transform-origin: center center; animation: orbit-rotate 1.9s linear infinite; }
+        .neon-border-wrapper .orbit .segment {
+          position: absolute;
+          left: 50%;
+          top: 0;
+          transform: translateX(-50%);
+          width: 22px;
+          height: 3px;
+          border-radius: 2px;
+          background: linear-gradient(90deg, rgba(74,222,128,0) 0%, rgba(74,222,128,0.95) 50%, rgba(74,222,128,0) 100%);
+          filter: blur(0.6px);
+          opacity: 0.95;
+        }
+        @keyframes orbit-rotate { to { transform: rotate(360deg); } }
       `}</style>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 min-h-[100dvh] lg:min-h-0">
@@ -616,25 +657,36 @@ export default function Terminal({ onSwitchView }: { onSwitchView?: () => void }
               <span className="text-[#58a6ff]">terminal</span>
               <span className="text-[#6b7280]">:~$</span>
               <span className="text-[#d1e6d1]">ls quick_actions/</span>
-              <select
-                disabled={locked}
-                className="ml-2 bg-[#0b0f14] border border-[#4b5563] hover:border-[#10b981]/70 text-[#2BC20E] outline-none px-2 py-1 rounded cursor-pointer disabled:opacity-40 transition-colors"
-                onChange={(e) => {
-                  if (e.target.value) {
-                    runCommand(e.target.value);
-                    e.target.value = "";
-                  }
-                }}
-              >
-                <option value="">-- select action --</option>
-                <option value="about">about</option>
-                <option value="experience">experience</option>
-                <option value="skills">skills</option>
-                <option value="projects">projects</option>
-                <option value="education">education</option>
-                <option value="contact">contact</option>
-                <option value="clear">clear</option>
-              </select>
+
+              {/* Mobile-visible label and helper so users know this is interactive */}
+              <span className="ml-2 text-[11px] text-[#9ca3af] font-semibold sm:hidden">Quick actions</span>
+              <span id="quick-actions-desc" className="ml-2 text-[11px] text-[#9ca3af] sm:hidden">Tap to run common commands</span>
+
+              <div className="ml-2 neon-border-wrapper">
+                <select
+                  id="quick-actions-select"
+                  aria-label="Quick actions menu"
+                  aria-describedby="quick-actions-desc"
+                  title="Quick actions: run common commands (about, experience, skills, projects, education, contact, clear)"
+                  disabled={locked}
+                  className="bg-[#0b0f14] border border-[#4b5563] hover:border-[#10b981]/70 text-[#2BC20E] outline-none px-2 py-1 rounded cursor-pointer disabled:opacity-40 transition-colors"
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      runCommand(e.target.value);
+                      e.target.value = "";
+                    }
+                  }}
+                >
+                  <option value="">-- select action --</option>
+                  <option value="about">about</option>
+                  <option value="experience">experience</option>
+                  <option value="skills">skills</option>
+                  <option value="projects">projects</option>
+                  <option value="education">education</option>
+                  <option value="contact">contact</option>
+                  <option value="clear">clear</option>
+                </select>
+              </div>
             </div>
           </div>
 

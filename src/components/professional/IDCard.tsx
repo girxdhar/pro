@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import profileImage from "./profilepic.png";
+import profileImage from "./image.png";
 import { ExternalLink, ShieldCheck } from "lucide-react";
 
 export default function NeonIDCard() {
