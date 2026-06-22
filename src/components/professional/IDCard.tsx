@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import profileImage from "./image.png";
-import { ExternalLink, ShieldCheck } from "lucide-react";
+import { ExternalLink, ShieldCheck, GripHorizontal } from "lucide-react";
 
 export default function NeonIDCard() {
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -113,6 +113,32 @@ export default function NeonIDCard() {
       className="min-h-[100dvh] flex flex-col items-center justify-start relative overflow-hidden w-full"
       style={{ background: "linear-gradient(180deg, #111 0vh, #333 50vh, #111 100vh)" }}
     >
+      <style>{`
+        .neon-border-wrapper { position: relative; display: inline-block; }
+        /* softened background glow (very subtle) */
+        .neon-border-wrapper::after {
+          content: "";
+          position: absolute;
+          top: -2px;
+          left: -2px;
+          right: -2px;
+          bottom: -2px;
+          border-radius: 6px;
+          background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(57,255,20,0.9) 40%, rgba(57,255,20,0.15) 60%, rgba(0,0,0,0) 100%);
+          background-size: 200% 100%;
+          animation: neon-slide 2.6s linear infinite;
+          pointer-events: none;
+          mix-blend-mode: screen;
+          opacity: 0.55;
+          filter: drop-shadow(0 0 4px rgba(57,255,20,0.35));
+        }
+        @keyframes neon-slide {
+          0% { background-position: 0% 50%; }
+          100% { background-position: 200% 50%; }
+        }
+        .neon-border-wrapper button { position: relative; z-index: 3; }
+      `}</style>
+
       {/* HEADER SECTION */}
       <div className="w-full bg-black px-4 py-1.5 flex items-center justify-between border-b border-[#111] z-10 shrink-0 shadow-[0_0_15px_rgba(0,255,0,0.05)]">
         <div className="flex items-center gap-2 text-[10px] font-mono text-[#39ff14]">
@@ -120,24 +146,26 @@ export default function NeonIDCard() {
           <span className="tracking-widest uppercase font-bold drop-shadow-[0_0_5px_rgba(57,255,20,0.5)]">Secure Link Active</span>
         </div>
         
-        <button
-          onClick={() => {
-            window.location.href = "https://girxdhar.github.io/personal";
-          }}
-          className="group transition-transform duration-300 hover:scale-105"
-        >
-          <div className="relative bg-[#050608] border border-[#1a1a1a] group-hover:border-[#39ff14] rounded-md px-3 py-1 transition-colors duration-300 shadow-[0_0_8px_rgba(57,255,20,0.2)] group-hover:shadow-[0_0_15px_rgba(57,255,20,0.5)] flex items-center gap-1.5">
-            <span className="text-[#39ff14] text-[9px] font-mono font-bold tracking-wider uppercase drop-shadow-[0_0_2px_rgba(57,255,20,0.8)]">Personal Profile</span>
-            <ExternalLink className="w-3 h-3 text-[#39ff14] drop-shadow-[0_0_2px_rgba(57,255,20,0.8)]" />
-          </div>
-        </button>
+        <div className="neon-border-wrapper">
+          <button
+            onClick={() => {
+              window.location.href = "https://girxdhar.github.io/personal";
+            }}
+            className="group transition-transform duration-300 hover:scale-105"
+          >
+            <div className="relative bg-[#050608] border border-[#1a1a1a] group-hover:border-[#39ff14] rounded-md px-3 py-1 transition-colors duration-300 shadow-[0_0_8px_rgba(57,255,20,0.2)] group-hover:shadow-[0_0_15px_rgba(57,255,20,0.5)] flex items-center gap-1.5">
+              <span className="text-[#39ff14] text-[9px] font-mono font-bold tracking-wider uppercase drop-shadow-[0_0_2px_rgba(57,255,20,0.8)]">Personal Profile</span>
+              <ExternalLink className="w-3 h-3 text-[#39ff14] drop-shadow-[0_0_2px_rgba(57,255,20,0.8)]" />
+            </div>
+          </button>
+        </div>
       </div>
 
       {/* WRAPPER: Thread + Connector + Card */}
       <div
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
-        className="relative flex flex-col items-center cursor-grab active:cursor-grabbing"
+        className="relative flex flex-col items-center cursor-grab active:cursor-grabbing group"
         style={{
           transform: `translate(${cardX}px, 0px)
                       rotateX(${dragOffset.y * 0.05 + idleX}deg)
@@ -185,6 +213,11 @@ export default function NeonIDCard() {
           className="relative bg-[#0a0a0a] rounded-xl shadow-lg max-w-[260px] w-full
                      p-6 pt-16 flex flex-col text-[#58ff49] font-mono select-none"
         >
+          {/* Subtle Drag Grip Indicator */}
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 text-gray-500 opacity-25 group-hover:opacity-85 group-hover:text-[#39ff14] transition-all duration-300">
+            <GripHorizontal size={14} className="animate-pulse" />
+          </div>
+
           <div className="absolute top-3 left-5 text-[7px] opacity-50 text-gray-400">
             Engineer
           </div>

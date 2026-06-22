@@ -3,8 +3,6 @@ import IDCard from "./IDCard";
 import { portfolioData } from "../../data/portfolioData";
 import { ChevronDown, ExternalLink } from "lucide-react";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
 type CardBlock =
   | { type: "section"; label: string }
   | { type: "text-card"; body: string }
@@ -15,8 +13,6 @@ type CardBlock =
   | { type: "about-card"; data: any };
 
 type HistoryItem = { command: string; output: string | CardBlock[] };
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
 
 const Tag = ({ text }: { text: string }) => (
   <span className="inline-block border border-[#174a17] text-[#10b981] bg-[#021002] px-1.5 py-0.5 mr-1.5 mb-1.5 text-[10px] uppercase tracking-wide">
@@ -147,26 +143,34 @@ const AsciiWriter = ({ text, speed = 60, delay = 0 }: { text: string; speed?: nu
 };
 
 const AboutCard = ({ data }: { data: any }) => (
-  <fieldset className="border border-[#173a17] px-3 pb-3 pt-2 mb-3 bg-[#020602] font-mono animate-type-in">
+  <fieldset className="border border-[#173a17] px-3 pb-3 pt-2 mb-3 bg-[#020602] font-mono animate-type-in overflow-hidden">
     <legend className="text-[#4ade80] text-[11px] px-2 font-bold tracking-wider uppercase">
       {data.title || "ABOUT ME"}
     </legend>
-    <div className="flex flex-col sm:flex-row gap-4 mb-3 items-center sm:items-start pt-2">
+    <div className="flex flex-col md:flex-row gap-4 mb-3 items-center md:items-start pt-2 min-w-0">
       {data.ascii && (
-        <pre className="text-[#4ade80] text-[8px] leading-tight opacity-80 hidden sm:block font-mono">
-          <AsciiWriter text={data.ascii} speed={70} />
-        </pre>
+        <div className="w-full md:w-auto flex justify-center md:justify-start overflow-hidden">
+          <pre
+            className="text-[#4ade80] text-[8px] min-[380px]:text-[9px] sm:text-[10px] md:text-[11px] leading-[0.9] opacity-85 font-mono whitespace-pre max-w-full overflow-x-auto px-1 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            style={{
+              fontFamily: "'Courier New', Courier, monospace",
+              textShadow: "0 0 4px rgba(74,222,128,0.35)",
+            }}
+          >
+            <AsciiWriter text={data.ascii} speed={45} />
+          </pre>
+        </div>
       )}
-      <div className="flex-1 w-full min-h-[90px]">
+      <div className="flex-1 w-full min-w-0 min-h-[90px]">
         <div className="text-[#0ea5e9] font-bold tracking-wider mb-2 text-xs">
           ❯ <TypeWriter text={data.role} delay={500} speed={25} />
         </div>
-        <div className="grid grid-cols-1 xs:grid-cols-2 gap-x-2 gap-y-1 text-[11px] mb-2 pl-3 border-l-2 border-[#173a17]/50">
-           <div className="text-[#a3b1a3]">LOC: <span className="text-[#d1e6d1]"><TypeWriter text={data.location} delay={800} /></span></div>
-           <div className="text-[#a3b1a3]">SYS: <span className="text-[#4ade80] animate-pulse"><TypeWriter text={data.status} delay={1000} /></span></div>
-           {data.stats && Object.entries(data.stats).map(([k, v], idx) => (
-             <div key={idx} className="text-[#a3b1a3] uppercase">{k}: <span className="text-[#eab308]"><TypeWriter text={v as string} delay={1200 + (idx * 200)} /></span></div>
-           ))}
+        <div className="grid grid-cols-1 min-[420px]:grid-cols-2 gap-x-2 gap-y-1 text-[11px] mb-2 pl-3 border-l-2 border-[#173a17]/50">
+          <div className="text-[#a3b1a3]">LOC: <span className="text-[#d1e6d1]"><TypeWriter text={data.location} delay={800} /></span></div>
+          <div className="text-[#a3b1a3]">SYS: <span className="text-[#4ade80] animate-pulse"><TypeWriter text={data.status} delay={1000} /></span></div>
+          {data.stats && Object.entries(data.stats).map(([k, v], idx) => (
+            <div key={idx} className="text-[#a3b1a3] uppercase">{k}: <span className="text-[#eab308]"><TypeWriter text={v as string} delay={1200 + (idx * 200)} /></span></div>
+          ))}
         </div>
       </div>
     </div>
@@ -202,8 +206,6 @@ const ContactCard = ({ fields }: { fields: { icon: string; value: string; href?:
   </fieldset>
 );
 
-// ─── Card renderer ────────────────────────────────────────────────────────────
-
 const renderCards = (blocks: CardBlock[]) => (
   <div className="w-full mt-1">
     {blocks.map((block, i) => {
@@ -238,8 +240,6 @@ const renderCards = (blocks: CardBlock[]) => (
   </div>
 );
 
-// ─── Legacy string renderer (for error/hello/etc) ─────────────────────────────
-
 const renderOutput = (text: string) => {
   return text.split("\n").map((line, i) => {
     const treeMatch = line.match(/^([╭╰├│─\s]*)(.*)$/);
@@ -270,8 +270,6 @@ const renderOutput = (text: string) => {
   });
 };
 
-// ─── Main Terminal ─────────────────────────────────────────────────────────────
-
 export default function Terminal({ onSwitchView }: { onSwitchView?: () => void }) {
   const [commandHistory, setCommandHistory] = useState<HistoryItem[]>([]);
   const [input, setInput] = useState("");
@@ -300,20 +298,14 @@ export default function Terminal({ onSwitchView }: { onSwitchView?: () => void }
     { action: "KERNEL MODULE LOADER START", status: "32 FOUND", color: "text-[#0ea5e9]" },
     { action: "SYSTEM ONLINE: NO ERRORS DETECTED", status: "ACTIVE", color: "text-[#10b981]" },
   ];
-
-  // ── Clock ──
   useEffect(() => {
     const tick = setInterval(() => setTime(new Date().toLocaleTimeString()), 1000);
     return () => clearInterval(tick);
   }, []);
-
-  // ── Cursor blink ──
   useEffect(() => {
     const blink = setInterval(() => setCursorVisible((v) => !v), 530);
     return () => clearInterval(blink);
   }, []);
-
-  // ── IntersectionObserver trigger ──
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -327,8 +319,6 @@ export default function Terminal({ onSwitchView }: { onSwitchView?: () => void }
     if (termRef.current) observer.observe(termRef.current);
     return () => observer.disconnect();
   }, []);
-
-  // ── Boot spinner ──
   useEffect(() => {
     if (!booting) return;
     const chars = ["-", "\\", "|", "/"];
@@ -339,8 +329,6 @@ export default function Terminal({ onSwitchView }: { onSwitchView?: () => void }
     }, 100);
     return () => clearInterval(spin);
   }, [booting]);
-
-  // ── Boot sequence ──
   useEffect(() => {
     if (!inView) return;
     let currentLine = 0;
@@ -360,20 +348,14 @@ export default function Terminal({ onSwitchView }: { onSwitchView?: () => void }
     timeoutId = setTimeout(typeNextLine, 200);
     return () => clearTimeout(timeoutId);
   }, [inView]);
-
-  // ── Focus input after command ──
   useEffect(() => {
     if (!locked && inputRef.current) {
       inputRef.current.focus({ preventScroll: true });
     }
   }, [locked, commandHistory]);
-
-  // ── Auto-scroll ──
   useEffect(() => {
     if (termRef.current) termRef.current.scrollTop = termRef.current.scrollHeight;
   }, [commandHistory, booting]);
-
-  // ─── interpret ───────────────────────────────────────────────────────────────
 
   const interpret = (cmd: string): string | CardBlock[] => {
     const lower = cmd.toLowerCase().trim();
@@ -463,8 +445,6 @@ export default function Terminal({ onSwitchView }: { onSwitchView?: () => void }
     return `╭── [ ERROR ]\n│ Command not found: '${cmd}'.\n╰── Type 'help' for a list of available commands.`;
   };
 
-  // ─── runCommand ───────────────────────────────────────────────────────────────
-
   const runCommand = (cmd: string) => {
     setLocked(true);
     const output = interpret(cmd);
@@ -477,27 +457,26 @@ export default function Terminal({ onSwitchView }: { onSwitchView?: () => void }
 
     if (Array.isArray(output)) {
       setCommandHistory([{ command: cmd, output: [] }]);
-      
+
       let index = 0;
       const renderNextBlock = () => {
         setCommandHistory((prev) => {
           const newHistory = [...prev];
           const lastIndex = newHistory.length - 1;
           const currentOutput = newHistory[lastIndex].output as CardBlock[];
-          
+
           if (index < output.length) {
-            newHistory[lastIndex] = { 
-              ...newHistory[lastIndex], 
-              output: [...currentOutput, output[index]] 
+            newHistory[lastIndex] = {
+              ...newHistory[lastIndex],
+              output: [...currentOutput, output[index]]
             };
             return newHistory;
           }
           return prev;
         });
-        
+
         index++;
         if (index < output.length) {
-          // Randomized delay between 200ms and 500ms for authentic stuttering
           setTimeout(renderNextBlock, Math.random() * 300 + 200);
         } else {
           setLocked(false);
@@ -507,27 +486,26 @@ export default function Terminal({ onSwitchView }: { onSwitchView?: () => void }
     } else {
       const lines = output.split('\n');
       setCommandHistory([{ command: cmd, output: "" }]);
-      
+
       let index = 0;
       const renderNextLine = () => {
         setCommandHistory((prev) => {
           const newHistory = [...prev];
           const lastIndex = newHistory.length - 1;
           const currentLines = newHistory[lastIndex].output as string;
-          
+
           if (index < lines.length) {
-            newHistory[lastIndex] = { 
-              ...newHistory[lastIndex], 
-              output: currentLines ? currentLines + "\n" + lines[index] : lines[index] 
+            newHistory[lastIndex] = {
+              ...newHistory[lastIndex],
+              output: currentLines ? currentLines + "\n" + lines[index] : lines[index]
             };
             return newHistory;
           }
           return prev;
         });
-        
+
         index++;
         if (index < lines.length) {
-          // Randomized delay between 60ms and 140ms
           setTimeout(renderNextLine, Math.random() * 80 + 60);
         } else {
           setLocked(false);
@@ -543,8 +521,6 @@ export default function Terminal({ onSwitchView }: { onSwitchView?: () => void }
     setInput("");
   };
 
-  // ─── JSX ─────────────────────────────────────────────────────────────────────
-
   return (
     <div
       className="max-w-7xl mx-auto w-full h-[100dvh] lg:h-auto overflow-y-auto lg:overflow-visible snap-y snap-mandatory scroll-smooth md:rounded-lg md:border border-[#1d1d1d] relative"
@@ -556,7 +532,7 @@ export default function Terminal({ onSwitchView }: { onSwitchView?: () => void }
         .text-\\[\\#01b012\\] { color: #01b012; }
         .text-\\[\\#2BC20E\\] { color: #2BC20E; }
         .bg-\\[\\#050608\\] { background-color: #050608; }
-        
+
         @keyframes typeIn {
           0% { opacity: 0; transform: translateY(6px); }
           100% { opacity: 1; transform: translateY(0); }
@@ -564,9 +540,7 @@ export default function Terminal({ onSwitchView }: { onSwitchView?: () => void }
         .animate-type-in {
           animation: typeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
-        /* Neon revolving border for quick actions (subtle + mobile-only orbit segment) */
         .neon-border-wrapper { position: relative; display: inline-block; }
-        /* softened background glow (very subtle) */
         .neon-border-wrapper::after {
           content: "";
           position: absolute;
@@ -588,8 +562,6 @@ export default function Terminal({ onSwitchView }: { onSwitchView?: () => void }
           100% { background-position: 200% 50%; }
         }
         .neon-border-wrapper select { position: relative; z-index: 3; }
-
-        /* Orbiting snake-like segment (mobile only) */
         .neon-border-wrapper .orbit { position: absolute; inset: -8px; display: block; pointer-events: none; z-index: 2; }
         .neon-border-wrapper .orbit { transform-origin: center center; animation: orbit-rotate 1.9s linear infinite; }
         .neon-border-wrapper .orbit .segment {
@@ -608,7 +580,6 @@ export default function Terminal({ onSwitchView }: { onSwitchView?: () => void }
       `}</style>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 min-h-[100dvh] lg:min-h-0">
-        {/* ── ID Card panel ── */}
         <div className="lg:col-span-1 bg-black border-b lg:border-b-0 lg:border-r border-[#252525] min-h-[100dvh] lg:min-h-0 flex flex-col justify-center relative snap-start snap-always">
           <div className="lg:sticky lg:top-6 w-full">
             <IDCard />
@@ -621,13 +592,10 @@ export default function Terminal({ onSwitchView }: { onSwitchView?: () => void }
             <ChevronDown className="w-6 h-6 drop-shadow-md" />
           </div>
         </div>
-
-        {/* ── Terminal panel ── */}
         <div
           id="terminal-section"
           className="lg:col-span-2 bg-[#050608] min-h-[100dvh] lg:min-h-0 flex flex-col relative snap-start snap-always"
         >
-          {/* Toolbar */}
           <div className="sticky top-0 z-50 flex flex-col shadow-md">
             <div className="bg-[#0b0f14] px-4 pt-6 pb-2 lg:py-2 flex items-center justify-between border-b border-[#252525]">
               <div className="flex items-center gap-3">
@@ -649,16 +617,12 @@ export default function Terminal({ onSwitchView }: { onSwitchView?: () => void }
                 <div className="opacity-70">{time}</div>
               </div>
             </div>
-
-            {/* Quick actions bar */}
             <div className="px-4 py-2 border-b border-[#252525] bg-[#0b0f14] text-xs flex items-center gap-2 flex-wrap">
               <span className="text-white">giri</span>
               <span className="text-[#6b7280]">@</span>
               <span className="text-[#58a6ff]">terminal</span>
               <span className="text-[#6b7280]">:~$</span>
               <span className="text-[#d1e6d1]">ls quick_actions/</span>
-
-              {/* Mobile-visible label and helper so users know this is interactive */}
               <span className="ml-2 text-[11px] text-[#9ca3af] font-semibold sm:hidden">Quick actions</span>
               <span id="quick-actions-desc" className="ml-2 text-[11px] text-[#9ca3af] sm:hidden">Tap to run common commands</span>
 
@@ -689,8 +653,6 @@ export default function Terminal({ onSwitchView }: { onSwitchView?: () => void }
               </div>
             </div>
           </div>
-
-          {/* Terminal body */}
           <div
             ref={termRef}
             className="p-4 flex-1 overflow-y-auto lg:h-[600px]"
@@ -728,7 +690,6 @@ export default function Terminal({ onSwitchView }: { onSwitchView?: () => void }
               <>
                 {commandHistory.map((item, i) => (
                   <div key={i} className="mb-3">
-                    {/* Prompt line */}
                     <div className="flex items-center gap-1 text-sm sm:text-xs mb-1">
                       <span className="text-white">giri</span>
                       <span className="text-[#6b7280]">@</span>
@@ -736,8 +697,6 @@ export default function Terminal({ onSwitchView }: { onSwitchView?: () => void }
                       <span className="text-[#6b7280]">:~$</span>
                       <span className="text-[#d1e6d1]">{item.command}</span>
                     </div>
-
-                    {/* Output */}
                     <div className="font-mono text-sm sm:text-xs">
                       {Array.isArray(item.output)
                         ? renderCards(item.output)
@@ -745,8 +704,6 @@ export default function Terminal({ onSwitchView }: { onSwitchView?: () => void }
                     </div>
                   </div>
                 ))}
-
-                {/* Input line */}
                 {!locked && (
                   <div className="text-sm sm:text-xs flex items-center">
                     <span className="text-white">giri</span>
